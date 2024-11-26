@@ -1,1 +1,182 @@
 in this project you can track your monthly expenses and manage it 
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monthly Expenses Manager</title>
+  <style>
+  * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f9;
+  color: #333;
+  padding: 20px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+h1 {
+  color: #007BFF;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+form input, form select, form button {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+form button {
+  background: #007BFF;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+form button:hover {
+  background: #0056b3;
+}
+
+.expense-list ul {
+  list-style: none;
+  margin-top: 20px;
+}
+
+.expense-list li {
+  padding: 10px;
+  background: #fff;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.summary {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.summary p {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Monthly Expenses Manager</h1>
+  </header>
+  
+  <main>
+    <section class="add-expense">
+      <h2>Add Expense</h2>
+      <form id="expense-form">
+        <input type="text" id="expense-name" placeholder="Expense Name" required>
+        <input type="number" id="expense-amount" placeholder="Amount" required>
+        <input type="date" id="expense-date" required>
+        <select id="expense-category" required>
+          <option value="" disabled selected>Select Category</option>
+          <option value="Food">Food</option>
+          <option value="Rent">Rent</option>
+          <option value="Transport">Transport</option>
+          <option value="Others">Others</option>
+        </select>
+        <button type="submit">Add Expense</button>
+      </form>
+    </section>
+
+    <section class="expense-list">
+      <h2>Expense List</h2>
+      <ul id="expenses">
+        <!-- Expenses will be dynamically added here -->
+      </ul>
+    </section>
+
+    <section class="summary">
+      <h2>Summary</h2>
+      <p>Total: <span id="total-amount">0</span></p>
+    </section>
+  </main>
+
+  <script >
+  // DOM Elements
+const expenseForm = document.getElementById("expense-form");
+const expenseName = document.getElementById("expense-name");
+const expenseAmount = document.getElementById("expense-amount");
+const expenseDate = document.getElementById("expense-date");
+const expenseCategory = document.getElementById("expense-category");
+const expensesList = document.getElementById("expenses");
+const totalAmount = document.getElementById("total-amount");
+
+// State
+let expenses = [];
+
+// Functions
+function addExpense(e) {
+  e.preventDefault();
+
+  const expense = {
+    id: Date.now(),
+    name: expenseName.value,
+    amount: parseFloat(expenseAmount.value),
+    date: expenseDate.value,
+    category: expenseCategory.value,
+  };
+
+  expenses.push(expense);
+  renderExpenses();
+  updateTotal();
+
+  // Reset form
+  expenseForm.reset();
+}
+
+function renderExpenses() {
+  expensesList.innerHTML = "";
+
+  expenses.forEach((expense) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <span>${expense.name} - $${expense.amount} (${expense.category})</span>
+      <button onclick="deleteExpense(${expense.id})">Delete</button>
+    `;
+    expensesList.appendChild(li);
+  });
+}
+
+function updateTotal() {
+  const total = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+  totalAmount.textContent = total.toFixed(2);
+}
+
+function deleteExpense(id) {
+  expenses = expenses.filter((expense) => expense.id !== id);
+  renderExpenses();
+  updateTotal();
+}
+
+// Event Listeners
+expenseForm.addEventListener("submit", addExpense);
+  </script>
+</body>
+</html>
